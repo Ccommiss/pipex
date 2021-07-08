@@ -17,7 +17,6 @@ int main(int ac, char **argv, char **envp)
 	int i = 0;
 	char *cmd1;
 	char cmd2[30];
-	char test[] = "/bin/ls";
 
 	int fd[2];
 	int status;
@@ -30,7 +29,7 @@ int main(int ac, char **argv, char **envp)
 		printf ("from dad id = %d\n", id);
 		close(fd[0]);
 
-		; // on duplique fd 1
+		//; // on duplique fd 1
 		printf("%s\n", argv[1]);
 		cmd1 = malloc(sizeof(char) * 100);
 		bzero(cmd1, strlen(argv[1]) + 5);
@@ -40,7 +39,7 @@ int main(int ac, char **argv, char **envp)
 		//cmd2 = strcat("/bin/", argv[2]);
 		// for (int j = 0; argv[j]; j++)
 		// 	printf ("%s \n", argv[j]);
-		//execve(cmd1, argv + 1, envp);
+		execve(cmd1, argv + 1, envp);
 		printf("icwrgtwrtti \n");
 		write(fd[1], "LOjwkjwL\n", 10);
 		close(fd[1]);

@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #define _POSIX_SOURCE
 
-int main (void)
+int main(int ac, char **argv, char **envp)
 {
 	int id = fork();
 	int n;

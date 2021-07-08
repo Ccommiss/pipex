@@ -1,11 +1,3 @@
-total 56
--rwxr-xr-x  1 clairecommissaire  staff  10960  6 jul 14:18 a.out
-drwxr-xr-x@ 3 clairecommissaire  staff     96  6 jul 13:53 a.out.dSYM
--rw-r--r--  1 clairecommissaire  staff    876  6 jul 14:32 exec.c
--rw-r--r--  1 clairecommissaire  staff      0  6 jul 14:36 infile
--rw-r--r--  1 clairecommissaire  staff   1030  6 jul 09:29 main.c
--rw-r--r--  1 clairecommissaire  staff      0  6 jul 14:36 onemore
--rw-r--r--  1 clairecommissaire  staff      0  6 jul 14:36 outfile
--rw-r--r--  1 clairecommissaire  staff   1556 30 jui 15:31 pid.c
--rw-r--r--  1 clairecommissaire  staff    825  6 jul 13:47 pipe.c
--rwxr-xr-x  1 clairecommissaire  staff      0 29 jui 13:22 testfile
+Child reads : parent sends
+
+Try to printf in child 
