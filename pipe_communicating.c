@@ -40,30 +40,24 @@ int main(int ac, char **argv, char **envp)
 
 	find_command(&cmd1, &args1, path);
 	find_command(&cmd2, &args2, path);
-	// execve(cmd1, args1, envp);
-	// execve(cmd2, args2, envp);
 	if (pid == 0)
 	{
-		//child process
-		dup2(fd[1], STDOUT_FILENO); // on redirige le STDOUT sur writing end du pipe
-		//dup2(infile, STDOUT_FILENO); // on redirige le STDOUT sur writing end du pipe
-
+		dup2(fd[1], STDOUT_FILENO); //
+		dup2(infile, STDIN_FILENO); //test
 		close(fd[0]);
 		close(fd[1]);
 		execve(cmd1, args1, envp);
 	}
-
-	int pid2 = fork();
-	if (pid2 == 0)
+	else
 	{
 		dup2(fd[0], STDIN_FILENO); // on redirgine STDIN sur reading end u pipe
-		//dup2(outfile, STDIN_FILENO);
+		dup2(outfile, STDOUT_FILENO); // ici je redirige la sortie de la commande vers outfile
 		close(fd[0]);
 		close(fd[1]);
+
 		execve(cmd2, args2, envp);
 	}
 	close(fd[0]);
 	close(fd[1]);
 	waitpid(pid, NULL, 0);
-	waitpid(pid2, NULL, 0);
 }
