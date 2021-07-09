@@ -24,6 +24,10 @@ int main(int ac, char **argv, char **envp)
 		return 0;
 	int id = fork();
 
+	int j = 0;
+	while (envp[j++] != NULL)
+		printf ("%s \n", envp[j]);
+
 	if (id == 0) // processs FILS BVA ECRIRE
 	{
 		printf ("from dad id = %d\n", id);

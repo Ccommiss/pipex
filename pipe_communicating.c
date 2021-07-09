@@ -9,7 +9,11 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include "pipex.h"
 #define _POSIX_SOURCE
+
+void find_command(char **cmd, char ***args, char *path);
+
 
 int main(int ac, char **argv, char **envp)
 {
@@ -24,36 +28,39 @@ int main(int ac, char **argv, char **envp)
 	int infile = open("./infile", O_RDWR);
 	int outfile = open("./outfile", O_RDWR);
 
-	cmd1 = malloc(sizeof(char) * 100);
-	bzero(cmd1, strlen(argv[1]) + 5);
-	cmd1 = strcat(cmd1, "/bin/");
-	cmd1 = strcat(cmd1, argv[1]);
+	char *path;
+	int i = 0;
+	while (ft_strncmp(envp[i], "PATH", 4) != 0)
+		i++;
+	path = ft_strdup(envp[i]);
+	cmd1 = ft_strdup(argv[1]);
+	cmd2 = ft_strdup(argv[2]);
+	char **args1;
+	char **args2;
 
-	if (ac > 2)
-	{
-		cmd2 = malloc(sizeof(char) * 100);
-		bzero(cmd2, strlen(argv[2]) + 5);
-		cmd2 = strcat(cmd2, "/bin/");
-		cmd2 = strcat(cmd2, argv[2]);
-	}
-
+	find_command(&cmd1, &args1, path);
+	find_command(&cmd2, &args2, path);
+	// execve(cmd1, args1, envp);
+	// execve(cmd2, args2, envp);
 	if (pid == 0)
 	{
 		//child process
 		dup2(fd[1], STDOUT_FILENO); // on redirige le STDOUT sur writing end du pipe
+		//dup2(infile, STDOUT_FILENO); // on redirige le STDOUT sur writing end du pipe
+
 		close(fd[0]);
 		close(fd[1]);
-		execve(cmd1, NULL, envp);
+		execve(cmd1, args1, envp);
 	}
 
 	int pid2 = fork();
 	if (pid2 == 0)
 	{
 		dup2(fd[0], STDIN_FILENO); // on redirgine STDIN sur reading end u pipe
+		//dup2(outfile, STDIN_FILENO);
 		close(fd[0]);
 		close(fd[1]);
-		if (ac > 2)
-			execve(cmd2, NULL, envp);
+		execve(cmd2, args2, envp);
 	}
 	close(fd[0]);
 	close(fd[1]);
