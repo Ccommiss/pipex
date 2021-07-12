@@ -11,3 +11,16 @@
 #include <stdlib.h>
 #include "./libft/libft.h"
 #define _POSIX_SOURCE
+
+typedef struct s_cmd t_cmd;
+
+typedef struct s_cmd {
+	int		index;
+	char	*cmdp; // command path
+	char 	**cmd_args; //command args;
+	t_cmd	*next;
+
+}			t_cmd;
+
+void find_command(char **cmd, char ***args, char *path);
+t_cmd	*take_multiple_args(char **argv, int ac, char *path);

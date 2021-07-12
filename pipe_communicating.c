@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include "pipex.h"
 #define _POSIX_SOURCE
+// Bon file 
 
 void find_command(char **cmd, char ***args, char *path);
 
@@ -33,6 +34,11 @@ int main(int ac, char **argv, char **envp)
 	while (ft_strncmp(envp[i], "PATH", 4) != 0)
 		i++;
 	path = ft_strdup(envp[i]);
+
+	take_multiple_args(argv, ac, path);
+	exit (0);
+	// test lst chainees por multipipe 
+
 	cmd1 = ft_strdup(argv[1]);
 	cmd2 = ft_strdup(argv[2]);
 	char **args1;
@@ -42,6 +48,7 @@ int main(int ac, char **argv, char **envp)
 	find_command(&cmd2, &args2, path);
 	if (pid == 0)
 	{
+		printf ("[child] Process pid = %d and parent id %d\n", getpid(), getppid());
 		dup2(fd[1], STDOUT_FILENO); //
 		dup2(infile, STDIN_FILENO); //test
 		close(fd[0]);
@@ -50,6 +57,7 @@ int main(int ac, char **argv, char **envp)
 	}
 	else
 	{
+		printf ("Process pid = %d and parent id %d\n", getpid(), getppid());
 		dup2(fd[0], STDIN_FILENO); // on redirgine STDIN sur reading end u pipe
 		dup2(outfile, STDOUT_FILENO); // ici je redirige la sortie de la commande vers outfile
 		close(fd[0]);
