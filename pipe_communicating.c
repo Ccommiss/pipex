@@ -54,7 +54,6 @@ int main(int ac, char **argv, char **envp)
 		dup2(outfile, STDOUT_FILENO); // ici je redirige la sortie de la commande vers outfile
 		close(fd[0]);
 		close(fd[1]);
-
 		execve(cmd2, args2, envp);
 	}
 	close(fd[0]);
