@@ -22,5 +22,11 @@ typedef struct s_cmd {
 
 }			t_cmd;
 
+typedef struct s_info t_info;
+
+// typedef struct s_info { pas sure
+// 	int 		index_max;
+// }				t_info;
+
 void find_command(char **cmd, char ***args, char *path);
 t_cmd	*take_multiple_args(char **argv, int ac, char *path);
