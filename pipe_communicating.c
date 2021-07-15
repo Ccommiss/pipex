@@ -29,7 +29,8 @@ void find_command(char **cmd, char ***args, char *path);
 int main(int ac, char **argv, char **envp)
 {
 	int infile = open(argv[1], O_RDWR);
-	int outfile = open(argv[ac], O_RDWR);
+	printf ("%s\n", argv[ac - 1]);
+	int outfile = open(argv[ac - 1], O_RDWR);
 	int **fd;
 	int i = 0;
 	pid_t pid;
@@ -40,93 +41,97 @@ int main(int ac, char **argv, char **envp)
 
 	fd = malloc(sizeof(int *) * ac - 4);
 	int j = 0;
+
 	while (j < ac - 4)
 	{
+		printf ("on malloc %d\n", j);
 		fd[j] = malloc(sizeof(int) * 2);
 		fd[j][0] = 9;
+		printf ("fd j 0 = %d \n", fd[j][0]);
 		j++;
 	}
-	j = 0;
 
 	while (j < ac - 4)
 	{
 		pipe(fd[j]); //on cree le nm de pipe
+		printf ("on pipe j = %d\n", j);
 		j++;
 	}
 
-	//pipe(fd);
-
+	j = 0;
 	while (ft_strncmp(envp[i], "PATH", 4) != 0)
 		i++;
 	path = ft_strdup(envp[i]);
 
 	cmds = take_multiple_args(argv, ac, path);
-	// while (cmds!= NULL)
-	// {
-	// 	printf("%s \n", cmds->cmdp);
-	// 	cmds = cmds->next;
-	// }
-	// exit(0);
-	// test lst chainees por multipipe
-	pid = fork();
-	printf ("HEY \n");
+	
+	
+	//test, infile devient le STDIN
+	
+	i = 0; 
 	while (cmds != NULL)
-	{
+	{	
+		printf ("FD = %d \n", i);
+		sleep(1);
+		pid = fork();
+		printf ("PROCESS = %d\n", pid);
+		sleep(1);
 		printf("Cooking command [%s] \n", cmds->cmdp);
 		printf("en haut \n");
 		if (pid == 0)
 		{
 			printf("1 / PID = %d  (parent : %d)\n", getpid(), getppid());
 			printf("CMD TO EXEC = %s \n", cmds->cmdp);
-			if (cmds->next !=NULL)
-			printf("NEXT CMD TO EXEC = %d - %s \n", cmds->next->index, cmds->next->cmdp);
-			dup2(fd[0][1], STDOUT_FILENO); //
-			dup2(infile, STDIN_FILENO);	   //test, infile devient le STDIN
-			close(fd[0][0]);
-			close(fd[0][1]);
+			sleep(1);
+			if (i == 0)
+				dup2(infile, STDIN_FILENO);
+			if (i >= 1){
+				printf ("passe par la \n");
+				dup2(fd[i - 1][0], STDIN_FILENO);
+			}
+			sleep(1);
+			dup2(fd[i - 1][1], STDOUT_FILENO);
+
+			sleep(1);
+			if (i < ac - 4)
+			{
+				printf (" i = %d \n", i);
+				dup2(fd[i][1], STDOUT_FILENO);
+			}
+			if (i == ac - 4) //last command
+			{
+				puts("on rentre \n");
+				dup2(outfile, STDOUT_FILENO);
+			}
+			close(fd[i - 1][0]);
+			close(fd[i - 1][1]);
+			close(fd[i][0]);
+			close(fd[i][1]);
 			execve(cmds->cmdp, cmds->cmd_args, envp);
+			printf ("yo\n");
 		}
-		else
-		{
-			pid2 = fork();
-			if (pid2 == 0)
-			{
-				printf("2 / PID = %d  (parent : %d)\n", getpid(), getppid());
-				printf("CMD TO EXEC = %s \n", cmds->cmdp);
-				if (cmds->next !=NULL)
-				printf("NEXT CMD TO EXEC = %d - %s \n", cmds->next->index, cmds->next->cmdp);
-				dup2(fd[1][0], fd[0][1]); // on redirgine STDIN sur reading end u pipe
-				dup2(fd[1][1], STDOUT_FILENO);
-				close(fd[1][0]);
-				close(fd[1][1]);
-				execve(cmds->cmdp, cmds->cmd_args, envp);
-			}
-			else //parent parent, premier a s'exec
-			{
-				printf("3 / PID = %d  (parent : %d)\n", getpid(), getppid());
-				printf("CMD TO EXEC = %s \n", cmds->cmdp);
-				if (cmds->next != NULL)
-				printf("NEXT CMD TO EXEC = %d - %s \n", cmds->next->index, cmds->next->cmdp);
-				dup2(fd[2][0], fd[1][1]);	  // on redirgine STDIN sur reading end u pipe
-				dup2(outfile, STDOUT_FILENO); // ici je redirige la sortie de la commande vers outfile
-				close(fd[2][0]);
-				close(fd[1][1]);
-				execve(cmds->cmdp, cmds->cmd_args, envp);
-			}
-		}
+		// else //parent stuff 
+		// {
+		// 		// printf("3 / PID = %d  (parent : %d)\n", getpid(), getppid());
+		// 		// printf("CMD TO EXEC = %s \n", cmds->cmdp);
+		// 		// printf ("FD = %d\n", i);
+		// 		// dup2(fd[i][0], STDIN_FILENO); // on redirgine STDIN sur reading end u pipe
+		// 		// dup2(outfile, STDOUT_FILENO); 
+		// 		// close(fd[i][0]);
+		// 		// close(fd[i][1]);
+		// 		//execve(cmds->cmdp, cmds->cmd_args, envp);
+		// }
+	
 		cmds = cmds->next;
 		printf ("_________\n");
-		// i = -1;
-		while (++i < 2)
-		 	wait(&status);
+		i++;
 	}
 	printf("ici \n");
-	close(fd[0][0]);
-	close(fd[0][1]);
-	close(fd[1][0]);
-	close(fd[1][1]);
-	close(fd[2][0]);
-	close(fd[2][1]);
+	// close(fd[0][0]);
+	// close(fd[0][1]);
+	// close(fd[1][0]);
+	// close(fd[1][1]);
+	waitpid(pid, NULL, 0);
 	return (1);
 }
 
