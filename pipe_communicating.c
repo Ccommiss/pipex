@@ -15,10 +15,27 @@
 
 void find_command(char **cmd, char ***args, char *path);
 
+void pipe_fds(int ***fd, int pipes)
+{
+	*fd = malloc(sizeof(int *) * pipes);
+	printf("ac - 4 = %d \n", pipes);
+	int j = 0;
+
+	while (j < pipes)
+	{
+		printf("on malloc %d\n", j);
+		fd[0][j] = malloc(sizeof(int) * 2);
+		pipe(fd[0][j]);
+		printf("ici fd j 0 = %d \n", fd[0][j][0]);
+		printf("fd j 1 = %d \n", fd[0][j][1]);
+		j++;
+	}
+}
+
 /*
-**		> Creation double tab to handle X pipe of 
+**		> Creation double tab to handle X pipe of
 **		int[2]
-** 
+**
 **     fd[0][0/1]       fd[2][0/1]
 **        v                 v
 **	cmd1  |  cmd2  |  cmd3  |  cmd4  |  cmd5
@@ -29,8 +46,9 @@ void find_command(char **cmd, char ***args, char *path);
 int main(int ac, char **argv, char **envp)
 {
 	int infile = open(argv[1], O_RDWR);
-	printf ("%s\n", argv[ac - 1]);
+	printf("%s\n", argv[ac - 1]);
 	int outfile = open(argv[ac - 1], O_RDWR);
+	printf("infile = %d\n outfile = %d\n", infile, outfile);
 	int **fd;
 	int i = 0;
 	pid_t pid;
@@ -39,91 +57,60 @@ int main(int ac, char **argv, char **envp)
 	t_cmd *cmds;
 	int status;
 
-	fd = malloc(sizeof(int *) * ac - 4);
-	int j = 0;
-
-	while (j < ac - 4)
-	{
-		printf ("on malloc %d\n", j);
-		fd[j] = malloc(sizeof(int) * 2);
-		fd[j][0] = 9;
-		printf ("fd j 0 = %d \n", fd[j][0]);
-		j++;
-	}
-
-	while (j < ac - 4)
-	{
-		pipe(fd[j]); //on cree le nm de pipe
-		printf ("on pipe j = %d\n", j);
-		j++;
-	}
-
-	j = 0;
+	pipe_fds(&fd, ac - 4);
 	while (ft_strncmp(envp[i], "PATH", 4) != 0)
 		i++;
 	path = ft_strdup(envp[i]);
 
 	cmds = take_multiple_args(argv, ac, path);
-	
-	
-	//test, infile devient le STDIN
-	
-	i = 0; 
+	i = 0;
 	while (cmds != NULL)
-	{	
-		printf ("FD = %d \n", i);
+	{
+		printf("tour = %d \n", i);
 		sleep(1);
 		pid = fork();
-		printf ("PROCESS = %d\n", pid);
+		printf("PROCESS = %d\n", pid);
 		sleep(1);
-		printf("Cooking command [%s] \n", cmds->cmdp);
-		printf("en haut \n");
+		printf("Cooking command [%s] \n\n", cmds->cmdp);
 		if (pid == 0)
 		{
 			printf("1 / PID = %d  (parent : %d)\n", getpid(), getppid());
 			printf("CMD TO EXEC = %s \n", cmds->cmdp);
 			sleep(1);
-			if (i == 0)
+			if (cmds->index == 1)
+			{ //premiere commande
 				dup2(infile, STDIN_FILENO);
-			if (i >= 1){
-				printf ("passe par la \n");
+				printf("duping STDIN > infile \n");
+			}
+			else
+			{
+				printf("passe par la \n");
+				printf("duping %d \n", fd[i - 1][0]);
 				dup2(fd[i - 1][0], STDIN_FILENO);
+				printf("just dupped\n");
+				close(fd[0][1]);
 			}
-			sleep(1);
-			dup2(fd[i - 1][1], STDOUT_FILENO);
-
-			sleep(1);
-			if (i < ac - 4)
-			{
-				printf (" i = %d \n", i);
-				dup2(fd[i][1], STDOUT_FILENO);
-			}
-			if (i == ac - 4) //last command
-			{
-				puts("on rentre \n");
-				dup2(outfile, STDOUT_FILENO);
-			}
-			close(fd[i - 1][0]);
-			close(fd[i - 1][1]);
-			close(fd[i][0]);
-			close(fd[i][1]);
-			execve(cmds->cmdp, cmds->cmd_args, envp);
-			printf ("yo\n");
 		}
-		// else //parent stuff 
-		// {
-		// 		// printf("3 / PID = %d  (parent : %d)\n", getpid(), getppid());
-		// 		// printf("CMD TO EXEC = %s \n", cmds->cmdp);
-		// 		// printf ("FD = %d\n", i);
-		// 		// dup2(fd[i][0], STDIN_FILENO); // on redirgine STDIN sur reading end u pipe
-		// 		// dup2(outfile, STDOUT_FILENO); 
-		// 		// close(fd[i][0]);
-		// 		// close(fd[i][1]);
-		// 		//execve(cmds->cmdp, cmds->cmd_args, envp);
-		// }
-	
+		sleep(1);
+		if (cmds->index == 2) // derniere dans le cas ou deux cmd
+		{
+			puts("on rentre \n");
+			dup2(outfile, STDOUT_FILENO);
+		}
+		else //pas la derniere, on dup le stdout sur l entree de la prochaine cmd
+		{
+			printf(" i = %d \n", i);
+			dup2(fd[i][1], STDOUT_FILENO);
+		}
+		close(fd[0][0]);
+		close(fd[0][1]);
+		close(fd[i][0]);
+		close(fd[i][1]);
+		execve(cmds->cmdp, cmds->cmd_args, envp);
+	//	wait(&status);
+		write(1, "yo\n", 4);
 		cmds = cmds->next;
-		printf ("_________\n");
+		printf("_________\n");
 		i++;
 	}
 	printf("ici \n");
