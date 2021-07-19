@@ -16,7 +16,6 @@ t_cmd 	*take_multiple_args(char **argv, int ac, char *path)
 		cmds->index = i;
 		cmds->cmdp = ft_strdup(argv[i + 1]);
 		find_command(&cmds->cmdp, &cmds->cmd_args, path);
-		printf ("Command %i : %s - args = %s\n", i, cmds->cmdp, cmds->cmd_args[1]);
 		i++;
 		cmds->next = malloc(sizeof(t_cmd));
 		if (i < ac - 2)
@@ -24,7 +23,5 @@ t_cmd 	*take_multiple_args(char **argv, int ac, char *path)
 		else
 			cmds->next = NULL; 
 	}
-	printf ("head Command %i : %s - args = %s\n", head->index, head->cmdp, head->cmd_args[1]);
-	//cmds = NULL;
 	return head;
 }

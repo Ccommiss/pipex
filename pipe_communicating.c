@@ -18,18 +18,15 @@ void find_command(char **cmd, char ***args, char *path);
 void pipe_fds(int ***fd, int pipes)
 {
 	*fd = malloc(sizeof(int *) * pipes);
-	printf("ac - 4 = %d \n", pipes);
 	int j = 0;
 
 	while (j < pipes)
 	{
-		printf("on malloc %d\n", j);
 		fd[0][j] = malloc(sizeof(int) * 2);
 		pipe(fd[0][j]);
-		printf("ici fd j 0 = %d \n", fd[0][j][0]);
-		printf("fd j 1 = %d \n", fd[0][j][1]);
 		j++;
 	}
+	printf ("%d pipe ont ete crees\n", j);
 }
 
 /*
@@ -46,9 +43,7 @@ void pipe_fds(int ***fd, int pipes)
 int main(int ac, char **argv, char **envp)
 {
 	int infile = open(argv[1], O_RDWR);
-	printf("%s\n", argv[ac - 1]);
 	int outfile = open(argv[ac - 1], O_RDWR);
-	printf("infile = %d\n outfile = %d\n", infile, outfile);
 	int **fd;
 	int i = 0;
 	pid_t pid;
@@ -66,48 +61,49 @@ int main(int ac, char **argv, char **envp)
 	i = 0;
 	while (cmds != NULL)
 	{
-		printf("tour = %d \n", i);
+		printf("tour = %d \n", cmds->index);
 		sleep(1);
 		pid = fork();
-		printf("PROCESS = %d\n", pid);
-		sleep(1);
-		printf("Cooking command [%s] \n\n", cmds->cmdp);
+		printf("[process] = %d Cooking command [%s] \n", pid, cmds->cmdp);
 		if (pid == 0)
 		{
-			printf("1 / PID = %d  (parent : %d)\n", getpid(), getppid());
+			printf("[Process %d - child of %d]\n", getpid(), getppid());
 			printf("CMD TO EXEC = %s \n", cmds->cmdp);
 			sleep(1);
 			if (cmds->index == 1)
 			{ //premiere commande
-				dup2(infile, STDIN_FILENO);
-				printf("duping STDIN > infile \n");
+				if (dup2(infile, STDIN_FILENO) == - 1)
+					perror ("==> Error dup2\n");
+				printf("Duping first command\n");
 			}
 			else
 			{
-				printf("passe par la \n");
-				printf("duping %d \n", fd[i - 1][0]);
-				dup2(fd[i - 1][0], STDIN_FILENO);
-				printf("just dupped\n");
-				close(fd[0][1]);
+				printf("duping input from pipe = %d %d\n", fd[i - 1][0], fd[i - 1][1]);
+				dprintf (STDERR_FILENO, "result of dup : %d \n", dup2(fd[i - 1][0], STDIN_FILENO)); // ex ; cmd2 va lire fd[0][0] qui corres a la premiere cmd 
+				dprintf(STDERR_FILENO, "else : on a dup l'entree\n");
+				close(fd[i - 1][1]);
+				close(fd[i - 1][0]);
 			}
+			dprintf(STDERR_FILENO, "on a dup l'entree\n");
+			if (cmds->next == NULL) // derniere dans le cas ou deux cmd
+			{
+				printf("[%d %d] Duping the last command %d\n", pid, getpid(), i);
+				if (dup2(outfile, STDOUT_FILENO) == -1)
+					perror ("==> Error dup2\n");
+			}
+			else //pas la derniere, on dup le stdout sur l entree de la prochaine cmd
+			{
+				printf("Duping output for the next pipe %d %d\n", fd[i][0], fd[i][1]);
+				if (dup2(fd[i][1], STDOUT_FILENO) == -1)
+					perror ("==> Error dup2\n");
+				close(fd[i][1]);
+				close(fd[i][0]);
+			}
+			dprintf(STDERR_FILENO,"exec %s \n", cmds->cmdp);
+			execve(cmds->cmdp, cmds->cmd_args, envp);
 		}
 		sleep(1);
-		if (cmds->index == 2) // derniere dans le cas ou deux cmd
-		{
-			puts("on rentre \n");
-			dup2(outfile, STDOUT_FILENO);
-		}
-		else //pas la derniere, on dup le stdout sur l entree de la prochaine cmd
-		{
-			printf(" i = %d \n", i);
-			dup2(fd[i][1], STDOUT_FILENO);
-		}
-		close(fd[0][0]);
-		close(fd[0][1]);
-		close(fd[i][0]);
-		close(fd[i][1]);
-		execve(cmds->cmdp, cmds->cmd_args, envp);
-	//	wait(&status);
+		write(1, "he\n", 4);
 		write(1, "yo\n", 4);
 		cmds = cmds->next;
 		printf("_________\n");
@@ -118,7 +114,7 @@ int main(int ac, char **argv, char **envp)
 	// close(fd[0][1]);
 	// close(fd[1][0]);
 	// close(fd[1][1]);
-	waitpid(pid, NULL, 0);
+//	waitpid(0, NULL, 0);
 	return (1);
 }
 

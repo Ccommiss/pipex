@@ -12,7 +12,7 @@
 			"args": ["infile", "grep l", "wc -l", "outfile"],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
-			"environment": [],
+			"environment": [{"PATH":"/Users/ccommiss/.brew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/munki:/Users/ccommiss/.brew/bin"}],
 			"externalConsole": false,
 			"MIMode": "lldb"
 		}
