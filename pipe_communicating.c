@@ -44,6 +44,7 @@ int main(int ac, char **argv, char **envp)
 {
 	int infile = open(argv[1], O_RDWR);
 	int outfile = open(argv[ac - 1], O_RDWR);
+	printf ("fd infile %d outfile %d \n", infile, outfile);
 	int **fd;
 	int i = 0;
 	pid_t pid;
@@ -79,7 +80,11 @@ int main(int ac, char **argv, char **envp)
 			else
 			{
 				printf("duping input from pipe = %d %d\n", fd[i - 1][0], fd[i - 1][1]);
-				dprintf (STDERR_FILENO, "result of dup : %d \n", dup2(fd[i - 1][0], STDIN_FILENO)); // ex ; cmd2 va lire fd[0][0] qui corres a la premiere cmd 
+				if (dup2(fd[i - 1][0], STDIN_FILENO) < 0) // ex ; cmd2 va lire fd[0][0] qui corres a la premiere cmd
+				{
+					perror("FAILS DUP\n");
+					exit(1);
+				}
 				dprintf(STDERR_FILENO, "else : on a dup l'entree\n");
 				close(fd[i - 1][1]);
 				close(fd[i - 1][0]);
@@ -93,16 +98,23 @@ int main(int ac, char **argv, char **envp)
 			}
 			else //pas la derniere, on dup le stdout sur l entree de la prochaine cmd
 			{
+				close(fd[i][0]);
 				printf("Duping output for the next pipe %d %d\n", fd[i][0], fd[i][1]);
 				if (dup2(fd[i][1], STDOUT_FILENO) == -1)
 					perror ("==> Error dup2\n");
 				close(fd[i][1]);
-				close(fd[i][0]);
 			}
+			dprintf(STDERR_FILENO, "Closing i - 1 = %d \n", i-1);
 			dprintf(STDERR_FILENO,"exec %s \n", cmds->cmdp);
 			execve(cmds->cmdp, cmds->cmd_args, envp);
+			dprintf(STDERR_FILENO,"Normally its dead\n");
 		}
 		sleep(1);
+		if (i >=1)
+		{
+			close(fd[i - 1][1]);
+			close(fd[i - 1][0]);
+		}
 		write(1, "he\n", 4);
 		write(1, "yo\n", 4);
 		cmds = cmds->next;
@@ -114,7 +126,7 @@ int main(int ac, char **argv, char **envp)
 	// close(fd[0][1]);
 	// close(fd[1][0]);
 	// close(fd[1][1]);
-//	waitpid(0, NULL, 0);
+
 	return (1);
 }
 
