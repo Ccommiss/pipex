@@ -2,7 +2,6 @@
 
 void find_command(char **cmd, char ***args, char *path)
 {
-	int i;
 	int j;
 	char **tab;
 

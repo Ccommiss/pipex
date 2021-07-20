@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include "./libft/libft.h"
+#include "libft.h"
 #define _POSIX_SOURCE
 
 typedef struct s_cmd t_cmd;
@@ -29,4 +29,4 @@ typedef struct s_info t_info;
 // }				t_info;
 
 void find_command(char **cmd, char ***args, char *path);
-t_cmd	*take_multiple_args(char **argv, int ac, char *path);
+t_cmd	*take_multiple_args(char **argv, int ac, char **envp);
