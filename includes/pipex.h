@@ -10,7 +10,6 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include "libft.h"
-#define _POSIX_SOURCE
 
 typedef struct s_cmd t_cmd;
 
@@ -19,14 +18,18 @@ typedef struct s_cmd {
 	char	*cmdp; // command path
 	char 	**cmd_args; //command args;
 	t_cmd	*next;
+	t_cmd	*head;
 
 }			t_cmd;
 
-typedef struct s_info t_info;
+enum {
+	INFILE,
+	OUTFILE
+};
 
-// typedef struct s_info { pas sure
-// 	int 		index_max;
-// }				t_info;
-
+void	free_fds(int **fd, int i, t_cmd *head);
+void	error_quit(void);
+void	get_file(int file[2], char **argv, int ac);
+void	pipe_fds(int ***fd, int pipes);
 void find_command(char **cmd, char ***args, char *path);
 t_cmd	*take_multiple_args(char **argv, int ac, char **envp);
