@@ -27,7 +27,7 @@ enum {
 	OUTFILE
 };
 
-void	free_fds(int **fd, int i, t_cmd *head);
+void	free_fds(int **fd, t_cmd *head);
 void	error_quit(void);
 void	get_file(int file[2], char **argv, int ac);
 void	pipe_fds(int ***fd, int pipes);

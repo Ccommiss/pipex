@@ -13,14 +13,16 @@
 
 /*
 **	Redirects stdin on read ends of fds, or infile if first command
-**	Redirects stdout on write ends of fds, or outfile if last command 
+**	Redirects stdout on write ends of fds, or outfile if last command
 */
 void	dup_ends(t_cmd *cmds, int infile, int outfile, int **fd)
 {
 	if (cmds->index == 0)
+	{
 		if (dup2(infile, STDIN_FILENO) == -1)
 			error_quit();
-	if (cmds->index != 0)
+	}
+	else if (cmds->index != 0)
 	{
 		if (dup2(fd[cmds->index - 1][0], STDIN_FILENO) < 0)
 			error_quit();
@@ -31,7 +33,6 @@ void	dup_ends(t_cmd *cmds, int infile, int outfile, int **fd)
 	{
 		if (dup2(outfile, STDOUT_FILENO) == -1)
 			error_quit();
-		free_fds(fd, cmds->index, cmds->head);
 	}
 	else if (cmds->next != NULL)
 	{
@@ -43,7 +44,7 @@ void	dup_ends(t_cmd *cmds, int infile, int outfile, int **fd)
 }
 
 /*
-**	Parent is closing fds 
+**	Parent is closing fds
 */
 void	close_fds(int **fd, t_cmd *cmds)
 {
@@ -51,29 +52,28 @@ void	close_fds(int **fd, t_cmd *cmds)
 	close(fd[cmds->index - 1][0]);
 }
 
-void	free_fds(int **fd, int i, t_cmd *head)
+void	free_fds(int **fd, t_cmd *head)
 {
-	int j;
+	int pipes;
 	t_cmd *tmp;
 
-	j = 0;
-	while(j < i)
-	{
-		free(fd[j]);
-		j++;
-	}
-	free(fd);
-	dprintf (2, "OK POUR FDS \n");
-
-	dprintf (2, "head %d \n", head->index);
+	pipes = 0;
 	while (head != NULL)
 	{
 		tmp = head;
+		free(head->cmdp); // command path
+		ft_free_double_tab(head->cmd_args);
 		head = head->next;
-		dprintf (2, "path = %s \n", tmp->cmdp);
-		free(tmp->cmdp); // command path
+		if (tmp->index > pipes)
+			pipes = tmp->index;
+		dprintf (2, "index = %d path = %s \n", tmp->index, tmp->cmdp);
 		free(tmp);
 	}
+
+	while(pipes-- > 0)
+		free(fd[pipes]);
+	free(fd);
+	dprintf (2, "OK POUR FDS \n");
 }
 
 /*
@@ -92,10 +92,12 @@ int	main(int ac, char **argv, char **envp)
 	int		**fd;
 	pid_t	pid;
 	t_cmd	*cmds;
+	t_cmd   *head;
 
 	get_file(files, argv, ac);
 	pipe_fds(&fd, ac - 4);
 	cmds = take_multiple_args(argv, ac, envp);
+	head = cmds;
 	while (cmds != NULL)
 	{
 		pid = fork();
@@ -111,5 +113,6 @@ int	main(int ac, char **argv, char **envp)
 			close_fds(fd, cmds);
 		cmds = cmds->next;
 	}
+	free_fds(fd, head);
 	return (1);
 }

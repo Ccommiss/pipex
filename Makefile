@@ -6,7 +6,7 @@
 #    By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/20 14:50:16 by ccommiss          #+#    #+#              #
-#    Updated: 2021/07/20 17:08:24 by ccommiss         ###   ########.fr        #
+#    Updated: 2021/07/20 20:58:04 by ccommiss         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,8 +21,8 @@ SRCS = $(SRC_FOLD)multipipe.c \
 
 
 LIB = $(SRC_FOLD)libft
-INCLUDES = /includes/ 
-FLAGS = -I.$(INCLUDES) -I$(LIB) -Wall -Werror -Wextra -fsanitize=address #-fno-omit-frame-pointer
+INCLUDES = /includes/
+FLAGS = -I.$(INCLUDES) -I$(LIB) -Wall -Werror -Wextra -fsanitize=address -fno-omit-frame-pointer
 OBJS = $(SRCS:.c=.o)
 CC = clang -g $(FLAGS)
 
