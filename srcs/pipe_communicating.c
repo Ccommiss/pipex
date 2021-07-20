@@ -31,9 +31,9 @@ void	dup_ends(t_cmd *cmds, int infile, int outfile, int **fd)
 	{
 		if (dup2(outfile, STDOUT_FILENO) == -1)
 			error_quit();
-		//free_fds(fd, cmds->index, cmds->head);
+		free_fds(fd, cmds->index, cmds->head);
 	}
-	if (cmds->next != NULL)
+	else if (cmds->next != NULL)
 	{
 		close(fd[cmds->index][0]);
 		if (dup2(fd[cmds->index][1], STDOUT_FILENO) == -1)
@@ -63,11 +63,14 @@ void	free_fds(int **fd, int i, t_cmd *head)
 		j++;
 	}
 	free(fd);
+	dprintf (2, "OK POUR FDS \n");
 
+	dprintf (2, "head %d \n", head->index);
 	while (head != NULL)
 	{
 		tmp = head;
 		head = head->next;
+		dprintf (2, "path = %s \n", tmp->cmdp);
 		free(tmp->cmdp); // command path
 		free(tmp);
 	}

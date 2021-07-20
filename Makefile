@@ -22,7 +22,7 @@ SRCS = $(SRC_FOLD)multipipe.c \
 
 LIB = $(SRC_FOLD)libft
 INCLUDES = /includes/ 
-FLAGS = -I.$(INCLUDES) -I$(LIB) -Wall -Werror -Wextra -fsanitize=address -fno-omit-frame-pointer
+FLAGS = -I.$(INCLUDES) -I$(LIB) -Wall -Werror -Wextra -fsanitize=address #-fno-omit-frame-pointer
 OBJS = $(SRCS:.c=.o)
 CC = clang -g $(FLAGS)
 
