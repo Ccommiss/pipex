@@ -1,3 +1,5 @@
 git add -A
-git commit -m "transfer school/home"
+echo "Commit :"
+read commit
+git commit -m "$commit"
 git push
