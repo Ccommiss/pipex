@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/17 17:49:57 by ccommiss          #+#    #+#             */
-/*   Updated: 2020/12/28 11:48:25 by ccommiss         ###   ########.fr       */
+/*   Created: 2020/11/27 18:46:38 by ccommiss          #+#    #+#             */
+/*   Updated: 2021/07/21 17:02:35 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-char	*ft_strchr(const char *s, int c)
+void	*ft_memcpy(void *dst, const void *src, size_t size)
 {
-	int	i;
+	unsigned char	*dst2;
+	unsigned char	*src2;
 
-	i = 0;
-	while (s[i] != c && s[i] != '\0')
-		i++;
-	if (s[i] == c)
-		return ((char *)&s[i]);
-	return (NULL);
+	if (!dst && !src)
+		return (0);
+	dst2 = (unsigned char *)dst;
+	src2 = (unsigned char *)src;
+	while (size-- > 0)
+		*dst2++ = *src2++;
+	return (dst);
 }

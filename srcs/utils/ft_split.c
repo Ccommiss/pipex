@@ -6,11 +6,11 @@
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/27 18:47:22 by ccommiss          #+#    #+#             */
-/*   Updated: 2021/06/22 12:54:09 by ccommiss         ###   ########.fr       */
+/*   Updated: 2021/07/21 16:58:56 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
 int	ft_countarrays(char const *s, char c)
 {

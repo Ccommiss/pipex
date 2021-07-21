@@ -1,5 +1,5 @@
 
-#include "libft.h"
+#include "pipex.h"
 
 char	*ft_strconcat(char *s1, char *s2, int size)
 {

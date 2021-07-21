@@ -6,7 +6,7 @@
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/20 16:48:54 by ccommiss          #+#    #+#             */
-/*   Updated: 2021/07/21 16:30:30 by ccommiss         ###   ########.fr       */
+/*   Updated: 2021/07/21 17:17:41 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ void	get_file(int file[2], char **argv, int ac)
 	if (ac < 5)
 		error_quit(USAGE, NULL, NULL);
 	if (access(argv[1], R_OK) == -1)
-		error_quit(NULL, NULL, NULL);
+		error_quit(FILE, NULL, NULL);
 	file[INFILE] = open(argv[1], O_RDWR);
 	if (file[INFILE] == -1 || access(argv[1], R_OK) == -1)
-		error_quit(NULL, NULL, NULL);
+		error_quit(FILE, NULL, NULL);
 	file[OUTFILE] = open(argv[ac - 1], O_RDWR | O_CREAT);
 	if (file[OUTFILE] == -1)
 		error_quit(NULL, NULL, NULL);

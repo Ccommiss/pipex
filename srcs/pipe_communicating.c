@@ -106,5 +106,5 @@ int	main(int ac, char **argv, char **envp)
 		cmds = cmds->next;
 	}
 	free_fds(fd, head);
-	return (1);
+	return (0);
 }

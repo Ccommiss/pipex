@@ -8,7 +8,7 @@ void	find_command(char **cmd, char ***args, char *path)
 
 	j = -1;
 	*args = ft_split(*cmd, ' ');
-	ft_memdel((void **)*cmd);
+	ft_memdel((void **)cmd);
 	tab = ft_split(path, ':');
 	while (tab[++j] != NULL)
 	{

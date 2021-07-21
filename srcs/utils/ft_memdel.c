@@ -1,25 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_memdel.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/22 13:47:38 by ccommiss          #+#    #+#             */
-/*   Updated: 2021/06/22 13:47:39 by ccommiss         ###   ########.fr       */
+/*   Created: 2020/11/30 14:34:56 by ccommiss          #+#    #+#             */
+/*   Updated: 2021/07/21 16:58:55 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# define BUFFER_SIZE 42
-# include <unistd.h>
-# include <stdlib.h>
-# include "libft.h"
+#include "pipex.h"
 
-int		get_next_line(int fd, char **line);
-char	*ft_fill_line(char *stock, int i, char *line);
-char	*ft_strconcat_gnl(char *s1, char *s2, int size);
-char	*ft_newstock(char **stock, int i);
-
-#endif
+void	ft_memdel(void **ptr)
+{
+	if (!ptr)
+		return ;
+	free(*ptr);
+	*ptr = 0;
+}

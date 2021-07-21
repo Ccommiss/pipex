@@ -1,21 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   malloc_char_pointer.c                              :+:      :+:    :+:   */
+/*   ft_free_double_tab.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/18 15:23:55 by ccommiss          #+#    #+#             */
-/*   Updated: 2021/06/22 12:55:09 by ccommiss         ###   ########.fr       */
+/*   Created: 2021/03/15 15:24:11 by ccommiss          #+#    #+#             */
+/*   Updated: 2021/07/21 16:58:54 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-int	ft_malloc_char_pointer(int size, char **ptr)
+void	ft_free_double_tab(char **tab)
 {
-	*ptr = (char *)malloc(sizeof(char) * size);
-	if (!*ptr)
-		return (0);
-	return (1);
+	int	i;
+
+	i = -1;
+	if (!tab)
+		return ;
+	while (tab[++i] != NULL)
+		free(tab[i]);
+	free(tab);
+	tab = NULL;
 }

@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/27 18:45:47 by ccommiss          #+#    #+#             */
-/*   Updated: 2020/12/28 11:46:40 by ccommiss         ###   ########.fr       */
+/*   Created: 2020/11/27 18:47:28 by ccommiss          #+#    #+#             */
+/*   Updated: 2021/07/21 16:58:58 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-void	ft_lstadd_back(t_list **alst, t_list *new)
+char	*ft_strdup(const char *s)
 {
-	t_list	*curr;
+	char	*new;
+	size_t	n;
 
-	if (*alst == NULL)
-		*alst = new;
-	else
-	{
-		curr = *alst;
-		while (curr->next != NULL)
-			curr = curr->next;
-		curr->next = new;
-		curr->next->next = NULL;
-	}
+	n = ft_strlen(s);
+	new = (char *)malloc(n * sizeof(char) + 1);
+	if (!new)
+		return (NULL);
+	new = ft_memcpy(new, s, n);
+	new[n] = '\0';
+	return (new);
 }

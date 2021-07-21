@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/27 18:47:09 by ccommiss          #+#    #+#             */
-/*   Updated: 2020/11/27 18:47:09 by ccommiss         ###   ########.fr       */
+/*   Created: 2020/11/18 10:34:20 by ccommiss          #+#    #+#             */
+/*   Updated: 2021/07/21 16:58:59 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-void	ft_putnbr_fd(int n, int fd)
+int	ft_strncmp(const char *first, const char *second, size_t length)
 {
-	if (n == INT_MIN)
+	size_t	i;
+
+	i = 0;
+	if ((first[0] == '\0' && second[0] == '\0') || length == 0)
+		return (0);
+	while (i < length - 1 && first[i] && second[i])
 	{
-		ft_putchar_fd('-', fd);
-		ft_putstr_fd("2147483648", fd);
+		if (first[i] != second[i])
+			return ((unsigned char)first[i] - (unsigned char)second[i]);
+		i++;
 	}
-	else
-	{
-		if (n < 0)
-		{
-			ft_putchar_fd('-', fd);
-			n = n * (-1);
-		}
-		if (n > 9)
-			ft_putnbr_fd((n / 10), fd);
-		ft_putchar_fd((n % 10 + 48), fd);
-	}
+	return ((unsigned char)first[i] - (unsigned char)second[i]);
 }

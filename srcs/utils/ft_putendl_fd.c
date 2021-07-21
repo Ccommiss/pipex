@@ -1,28 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/27 18:46:48 by ccommiss          #+#    #+#             */
-/*   Updated: 2020/11/27 18:46:48 by ccommiss         ###   ########.fr       */
+/*   Created: 2020/11/27 18:47:04 by ccommiss          #+#    #+#             */
+/*   Updated: 2021/07/21 16:58:46 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-void	*ft_memset(void *s, int c, size_t n)
+void	ft_putendl_fd(char const *s, int fd)
 {
-	size_t			i;
-	unsigned char	*arr;
-
-	i = 0;
-	arr = (unsigned char *)s;
-	while (i < n)
-	{
-		arr[i] = c;
-		i++;
-	}
-	return (s);
+	if (!s || !fd)
+		return ;
+	write(fd, s, (ft_strlen(s)));
+	write(fd, "\n", 1);
 }

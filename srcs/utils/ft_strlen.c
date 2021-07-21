@@ -1,27 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr.c                                        :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/16 15:22:56 by ccommiss          #+#    #+#             */
-/*   Updated: 2020/11/17 12:22:16 by ccommiss         ###   ########.fr       */
+/*   Created: 2020/11/17 12:12:12 by ccommiss          #+#    #+#             */
+/*   Updated: 2021/07/21 16:58:59 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-void	ft_putstr(char *str)
+size_t	ft_strlen(const char *s)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
-	if (!str)
-		return ;
-	while (str[i])
-	{
-		ft_putchar(str[i]);
+	if (!s)
+		return (0);
+	while (s[i])
 		i++;
-	}
+	return (i);
 }

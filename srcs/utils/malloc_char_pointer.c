@@ -1,25 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   malloc_char_pointer.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/17 12:12:12 by ccommiss          #+#    #+#             */
-/*   Updated: 2021/03/06 11:11:39 by ccommiss         ###   ########.fr       */
+/*   Created: 2021/06/18 15:23:55 by ccommiss          #+#    #+#             */
+/*   Updated: 2021/07/21 17:02:39 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-size_t	ft_strlen(const char *s)
+int	ft_malloc_char_pointer(int size, char **ptr)
 {
-	size_t	i;
-
-	i = 0;
-	if (!s)
+	*ptr = (char *)malloc(sizeof(char) * size);
+	if (!*ptr)
 		return (0);
-	while (s[i])
-		i++;
-	return (i);
+	return (1);
 }
