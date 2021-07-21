@@ -8,7 +8,7 @@ void	find_command(char **cmd, char ***args, char *path)
 
 	j = -1;
 	*args = ft_split(*cmd, ' ');
-	free(*cmd);
+	ft_memdel((void **)*cmd);
 	tab = ft_split(path, ':');
 	while (tab[++j] != NULL)
 	{
@@ -25,6 +25,8 @@ void	find_command(char **cmd, char ***args, char *path)
 		free(command_path);
 	}
 	ft_free_double_tab(tab);
+	if (!*cmd)
+		error_quit(CMD_ERR, NULL, NULL);
 }
 
 void	find_path(char **path, char **envp)
@@ -46,23 +48,21 @@ t_cmd	*take_multiple_args(char **argv, int ac, char **envp)
 
 	i = 1;
 	cmds = malloc(sizeof(t_cmd));
+	head = cmds;
 	find_path(&path, envp);
 	while (i < ac - 2)
 	{
-		if (i == 1)
-			head = cmds;
 		cmds->index = i - 1;
 		cmds->head = head;
 		cmds->cmdp = ft_strdup(argv[i + 1]);
 		find_command(&cmds->cmdp, &cmds->cmd_args, path);
 		i++;
+		cmds->next = NULL;
 		if (i < ac - 2)
 		{
 			cmds->next = malloc(sizeof(t_cmd));
 			cmds = cmds->next;
 		}
-		else
-			cmds->next = NULL;
 	}
 	free(path);
 	return (head);

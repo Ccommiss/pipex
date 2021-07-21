@@ -15,32 +15,30 @@
 **	Redirects stdin on read ends of fds, or infile if first command
 **	Redirects stdout on write ends of fds, or outfile if last command
 */
-void	dup_ends(t_cmd *cmds, int infile, int outfile, int **fd)
+void	dup_and_exec(t_cmd *cmds, int *files, int **fd, char **envp)
 {
-	if (cmds->index == 0)
-	{
-		if (dup2(infile, STDIN_FILENO) == -1)
-			error_quit();
-	}
-	else if (cmds->index != 0)
+	if (cmds && cmds->index == 0)
+		if (dup2(files[INFILE], STDIN_FILENO) == -1)
+			error_quit(DUP_ERR, cmds->head, fd);
+	if (cmds && cmds->index != 0)
 	{
 		if (dup2(fd[cmds->index - 1][0], STDIN_FILENO) < 0)
-			error_quit();
+			error_quit(DUP_ERR, cmds->head, fd);
 		close(fd[cmds->index - 1][1]);
 		close(fd[cmds->index - 1][0]);
 	}
-	if (cmds->next == NULL)
-	{
-		if (dup2(outfile, STDOUT_FILENO) == -1)
-			error_quit();
-	}
-	else if (cmds->next != NULL)
+	if (cmds && cmds->next == NULL)
+		if (dup2(files[OUTFILE], STDOUT_FILENO) == -1)
+			error_quit(DUP_ERR, cmds->head, fd);
+	if (cmds && cmds->next != NULL)
 	{
 		close(fd[cmds->index][0]);
 		if (dup2(fd[cmds->index][1], STDOUT_FILENO) == -1)
-			error_quit();
+			error_quit(DUP_ERR, cmds->head, fd);
 		close(fd[cmds->index][1]);
 	}
+	if (execve(cmds->cmdp, cmds->cmd_args, envp) == -1)
+		error_quit(EXEC_ERR, cmds->head, fd);
 }
 
 /*
@@ -54,26 +52,24 @@ void	close_fds(int **fd, t_cmd *cmds)
 
 void	free_fds(int **fd, t_cmd *head)
 {
-	int pipes;
-	t_cmd *tmp;
+	int		pipes;
+	t_cmd	*tmp;
 
 	pipes = 0;
 	while (head != NULL)
 	{
 		tmp = head;
-		free(head->cmdp); // command path
+		free(head->cmdp);
 		ft_free_double_tab(head->cmd_args);
 		head = head->next;
 		if (tmp->index > pipes)
 			pipes = tmp->index;
-		dprintf (2, "index = %d path = %s \n", tmp->index, tmp->cmdp);
 		free(tmp);
 	}
-
-	while(pipes-- > 0)
+	while (pipes-- > 0)
 		free(fd[pipes]);
 	free(fd);
-	dprintf (2, "OK POUR FDS \n");
+	fd = NULL;
 }
 
 /*
@@ -92,7 +88,7 @@ int	main(int ac, char **argv, char **envp)
 	int		**fd;
 	pid_t	pid;
 	t_cmd	*cmds;
-	t_cmd   *head;
+	t_cmd	*head;
 
 	get_file(files, argv, ac);
 	pipe_fds(&fd, ac - 4);
@@ -102,13 +98,9 @@ int	main(int ac, char **argv, char **envp)
 	{
 		pid = fork();
 		if (pid == -1)
-			error_quit();
+			error_quit(FORK_ERR, cmds->head, fd);
 		if (pid == 0)
-		{
-			dup_ends(cmds, files[INFILE], files[OUTFILE], fd);
-			if (execve(cmds->cmdp, cmds->cmd_args, envp) == -1)
-				error_quit();
-		}
+			dup_and_exec(cmds, files, fd, envp);
 		if (cmds->index >= 1)
 			close_fds(fd, cmds);
 		cmds = cmds->next;
