@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccommiss <ccommiss@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/20 16:48:54 by ccommiss          #+#    #+#             */
-/*   Updated: 2021/07/22 16:57:31 by ccommiss         ###   ########.fr       */
+/*   Updated: 2021/07/22 16:59:24 by ccommiss         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	error_quit(char *err, t_cmd *cmd, int **fd)
 
 void	get_file(int file[2], char **argv, int ac)
 {
-	if (ac != 5)
-		error_quit(NOBONUS, NULL, NULL);
+	if (ac < 5)
+		error_quit(USAGE, NULL, NULL);
 	if (access(argv[1], R_OK) == -1)
 		error_quit(FILE, NULL, NULL);
 	file[INFILE] = open(argv[1], O_RDWR);
@@ -34,7 +34,7 @@ void	get_file(int file[2], char **argv, int ac)
 		error_quit(FILE, NULL, NULL);
 	file[OUTFILE] = open(argv[ac - 1], O_RDWR | O_CREAT);
 	if (file[OUTFILE] == -1)
-		error_quit(NULL, NULL, NULL);
+		error_quit(OUTFILE_FAIL, NULL, NULL);
 }
 
 void	pipe_fds(int ***fd, int pipes)
